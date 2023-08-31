@@ -1,7 +1,7 @@
 import pandas as pd
 DF = pd.DataFrame
 
-from merdb.api.tacit_interactive import t, where, order_by, map, select, rename, Row, C, Column
+from merdb.api.tacit_interactive import t, where, order_by, map, select, rename, Row, C, Column, agg, join_inner
 from pandas.testing import assert_frame_equal
 
 def test_tacit():
@@ -94,27 +94,9 @@ def test_pipe():
 
 
 def test_common_parent_error():
-    # from merdb.api.tacit_interactive import *
-    # import pandas as pd
-
-    # def add(col): return col.sum()
-    #
-    #
-    # input_df = pd.DataFrame([
-    #     ["toronto", 10],
-    #     ["montreal", 20],
-    #     ["toronto", 30],
-    #     ["halifax", 5]
-    # ], columns=["location", "population"])
-    #
-    # # people = table(input_df)
-    # # total = agg(people, add, "population")
-    #
-    # r = t(input_df) | agg(lambda c: add(c), "population")
-    #
-    # print(r)
-    #
-
+    """
+    Regression test. Before the fix, when we did mul_sum, mul also changed to be like mul_sum
+    """
     data = {
         'price': [100, 50, 150],
         'volume': [2, 1, 1]
@@ -122,28 +104,17 @@ def test_common_parent_error():
 
     trades_df = pd.DataFrame(data)
 
-    print(trades_df)
-
-    weighted_avg_price = (trades_df['price'] * trades_df['volume']).sum() / trades_df['volume'].sum()
-    print('Weighted average price by Pandas:', weighted_avg_price)
-
     tt = t(trades_df)
     mul = tt | map(lambda r: r['price'] * r['volume'], "mul")
     mul_sum = mul | agg(lambda c: c.sum(), "mul", "mul_sum")
-    suma = tt | agg(lambda c: c.sum(), "volume", "sum")
-    zipped = mul_sum | join_inner(suma)
-    result = zipped | map(lambda r: r["mul_sum"] / r["mul"], "total")
 
-    print("Mul")
-    print(mul)
-    print("Mul Sum")
-    print(mul_sum)
-    print("Suma")
-    print(suma)
-    print("zipped")
-    print(zipped)
-    # print("r")
-    #
+    mul_data = data.copy()
+    mul_data['mul'] = [200, 50, 150]
+    exp_mul_df = pd.DataFrame(mul_data)
+    assert_frame_equal(mul.df(), exp_mul_df)
+
+    exp_mul_sum_df = pd.DataFrame({"mul_sum": [400]})
+    assert_frame_equal(mul_sum.df(), exp_mul_sum_df)
 
 def is_senior(r: Row[C.age: int, C.name: str]) -> bool:
     return r['age'] > 35

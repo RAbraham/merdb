@@ -129,7 +129,10 @@ class ModinDB(DB):
     def query(self, query: Source) -> InMemoryTable:
         tree = dependency_tree(self.tables, query)
         _df = tree.run()
-        return InMemoryTable(to_df(_df))
+        return mdf_to_mem_table(_df)
+
+def mdf_to_mem_table(_df):
+    return InMemoryTable(to_df(_df))
 
 
 # class ModinDB(DB):
@@ -151,6 +154,9 @@ class ModinTable:
         self.db = db
         self.name = name
         self.db.add_dfs({name: df})
+
+    def __call__(self, *args, **kwargs):
+        return mdf_to_mem_table(self.df)
 
 
 def _table(source, db: DB, name: str = None):
@@ -232,6 +238,13 @@ class MSource:
     def run(self):
         raise ValueError("Not Implemented")
 
+#
+# @dataclass
+# class ModinTable:
+#     table: md.DataFrame
+#
+#     def df(self):
+#         return self.table
 
 @dataclass
 class MTable(MSource):
@@ -263,6 +276,8 @@ class MBinaryOperation(MSource):
 def to_df(modin_df):
     return modin_df._to_pandas().reset_index(drop=True)
 
+# def to_df(modin_df):
+#     return modin_df.reset_index(drop=True)
 
 def size(df: MDF):
     return df.size

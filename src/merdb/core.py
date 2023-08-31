@@ -2,6 +2,7 @@ from typing import *
 from dataclasses import dataclass
 from enum import Enum
 import pandas as pd
+# import modin.pandas as md
 
 # TODO. move away from T and C to just strings?
 StrOrList = Union[str, List[str]]
@@ -23,6 +24,7 @@ class InMemoryTable:
 
     def df(self):
         return self.table
+
 
 
 @dataclass
