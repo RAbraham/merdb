@@ -74,10 +74,6 @@ def test_pipe():
     quadruple_age =  map(double_age, "age") | map(double_age, "age")
     result = (t(people_df)
               | where(is_senior)
-              # | where(is_senior)
-              # | where(lambda r: r.age > 35)
-              # | where(__.['age] > 35)
-              # | where(a_func(__.age))
               | order_by("name", "asc")
               | quadruple_age
               | select("age")
