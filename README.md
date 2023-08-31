@@ -3,10 +3,10 @@ I took a career break to build this. If you like it and are looking to hire a ML
 CAUTION: PROTOTYPE! NO PRODUCTION USE, not even development. 
 
 Merdb is a data processing library that
-* is a relational api like SQL to query data
+* is a relational api to query data (like SQL but in Python)
 * has Unix like pipes to compose operators using the `|` syntax
 * scales to multi core or a cluster(via Modin)
-* processes data too big to fit into memory
+* processes data too big to fit into memory(via Modin)
 * support interactive and optimized processing(optimizations in roadmap)
 
 # Install
@@ -18,7 +18,6 @@ pip install merdb
 ```python
 import pandas as pd
 from merdb.interactive import *
-# for lazy(TBD) use `from merdb.lazy import *`
 
 def is_senior(row) -> bool:
     return row['age'] > 35
@@ -37,6 +36,7 @@ people_df = pd.DataFrame([
 ], columns=cols)
 
 # One can specify functions without any source data like quadruple age
+# map is a merdb function
 quadruple_age = map(double_age, "age") | map(double_age, "age")
 
 result = (t(people_df) # convert people_df to a merdb table
