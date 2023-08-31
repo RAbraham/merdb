@@ -50,5 +50,10 @@ result = (t(people_df) # convert people_df to a merdb table
 # Convert to Pandas Dataframe and print
 print(result.df())
 
+# Output
+   new_age
+0      360
+1      280
 ```
+
 
