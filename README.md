@@ -1,5 +1,3 @@
-I took a career break to build this. If you like it and are looking to hire a ML engineer, please contact me :) 
-
 CAUTION: PROTOTYPE! NO PRODUCTION USE, not even development. 
 
 Merdb is a data processing library that
